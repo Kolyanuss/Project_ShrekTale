@@ -83,13 +83,28 @@ void ATestGameCharacter::UpdateAnimation()
 {
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+	
+	const float PlayerSpeedZ = PlayerVelocity.Z;
 
 	// Are we moving or standing still?
 	UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
-	if( GetSprite()->GetFlipbook() != DesiredAnimation 	)
+
+	if (PlayerSpeedZ != 0.0f)
+	{
+		DesiredAnimation = (PlayerSpeedZ > 0.0f) ? JumpUpAnimation : JumpDownAnimation;
+	}
+	
+
+	if( GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
+
+	/*DesiredAnimation = (PlayerSpeedX > 0.0f) ? JumpAnimation : IdleAnimation;
+	if (GetSprite()->GetFlipbook() != DesiredAnimation)
+	{
+		GetSprite()->SetFlipbook(DesiredAnimation);
+	}*/
 }
 
 void ATestGameCharacter::Tick(float DeltaSeconds)
@@ -126,6 +141,7 @@ void ATestGameCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const
 {
 	// Jump on any touch
 	Jump();
+
 }
 
 void ATestGameCharacter::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
